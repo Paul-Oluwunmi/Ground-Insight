@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+title: Ground Insight
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: Oluwunmi
+    given-names: Paul
+repository-code: "https://github.com/Paul-Oluwunmi/Ground-Insight"
+url: "https://github.com/Paul-Oluwunmi/Ground-Insight"
+version: 0.1.0
+date-released: 2026-05-27

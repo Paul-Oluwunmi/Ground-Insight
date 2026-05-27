@@ -221,6 +221,18 @@ git remote add origin https://github.com/Paul-Oluwunmi/Ground-Insight.git
 git push -u origin main
 ```
 
+## How to cite
+
+If you use Ground Insight in a report, thesis, or publication, please cite the repository (prefer a [release version](https://github.com/Paul-Oluwunmi/Ground-Insight/releases) when available):
+
+> Oluwunmi, P. (2026). Ground Insight (Version 0.1.0) [Computer software]. https://github.com/Paul-Oluwunmi/Ground-Insight
+
+Citation metadata is also in [`CITATION.cff`](CITATION.cff) (GitHub’s “Cite this repository”).
+
+## Contact
+
+Questions and feedback: open a [GitHub Issue](https://github.com/Paul-Oluwunmi/Ground-Insight/issues).
+
 ## Acknowledgements
 
 Built with Dash, Plotly, PyWavelets, emcee, pandas, polars, SciPy, statsmodels, and pymannkendall.
