@@ -11,7 +11,7 @@ Ground Insight provides a modular framework for:
 - **Statistical hypothesis testing** — independent t-tests comparing wells and time periods (p-values, effect size, significance)
 - **Monthly statistics** — seasonal boxplot summaries of groundwater levels by month and year, with customisable percentiles
 - **Extreme value analysis** — Block Maxima (GEV) and Peaks Over Threshold (GPD); stationary and non-stationary models; seasonal and drought/flood modes; Bayesian MCMC; return periods and diagnostics
-- **Wavelet analysis** — CWT, DWT, and SWT; wavelet coherence, cross-wavelet and partial coherence; phase analysis; optional confounder adjustment (rainfall, pumping, tide); groundwater–rainfall comparison
+- **Wavelet analysis** — CWT, DWT, and SWT; wavelet coherence, cross-wavelet and partial coherence; phase analysis; optional confounder adjustment (rainfall, pumping, tide); groundwater–rainfall comparison *(ongoing development)*
 - **Interactive dashboards** — Dash and Plotly visualisations
 
 ## Requirements
@@ -156,6 +156,8 @@ from src.plotting.extreme_value_analysis_pot import run_pot_dashboard  # Peaks O
 ### Wavelet analysis (`src/plotting/wavelet_analysis/`)
 
 Interactive dashboard for time–frequency analysis of groundwater and rainfall. Supports continuous (CWT), discrete (DWT), and stationary (SWT) transforms; wavelet coherence, cross-wavelet transform (XWT), and partial wavelet coherence (PWC); phase analysis; and optional removal of confounder effects (rainfall, pumping, tide) before analysis.
+
+> **Note:** Wavelet analysis is under active development. Core functionality is available, but further modularisation, testing, and documentation are in progress.
 
 ```python
 from src.plotting.wavelet_analysis import run_wavelet_analysis
