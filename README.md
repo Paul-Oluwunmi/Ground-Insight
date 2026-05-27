@@ -181,10 +181,6 @@ When you run `main_unified()`, you can select:
 11. All  
 12. Exit  
 
-## Other copies of this project
-
-An older packaged snapshot also exists at `F:\SCox_update\groundwater_module\ground_insight` (January 2026 export with additional migration documentation). **This Desktop folder contains the newer codebase** — use it for development and day-to-day work.
-
 ## Data on GitHub
 
 CSV and regional data folders are excluded from the repository (see `DATA.md`). Clone the repo, then add your own data locally before running the notebook.
