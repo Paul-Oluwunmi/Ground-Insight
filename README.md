@@ -1,6 +1,6 @@
 # Ground Insight
 
-A Python toolkit for groundwater level analysis, rainfall relationships, and interactive visualisation. This folder is the active working copy of the project (last updated April 2026).
+A Python toolkit for groundwater level analysis, rainfall relationships, and interactive visualisation.
 
 ## Overview
 
