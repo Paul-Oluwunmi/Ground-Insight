@@ -1,0 +1,36 @@
+# Mann-Kendall Analysis Configuration File
+# ============================================
+# Edit the values below to configure the analysis behaviour
+# DO NOT edit the Python code files - only edit this file!
+# ============================================
+
+# ROLLING MEAN SETTINGS
+USE_ROLLING_MEAN = True
+ROLLING_WINDOW_SIZE = 7
+
+# ANALYSIS SETTINGS
+ALPHA_LEVEL = 0.05
+RESAMPLE_FREQUENCY = D
+
+# SAVE LOCATION SETTINGS
+CUSTOM_SAVE_LOCATION = None
+CREATE_FOLDERS = True
+SAVE_PLOTS = True
+
+# BATCH ANALYSIS SETTINGS
+RUN_ORIGINAL_MK = False
+RUN_SEASONAL_MK = False
+RUN_TIME_EVOLUTION = False
+RUN_HYDROLOGICAL_YEAR = False
+RUN_DURATION_LOW_FLOW = False
+RUN_YEARLY_STATISTICS = False
+
+# TIME EVOLUTION SETTINGS
+TIME_EVOLUTION_WINDOW_SIZE = 1825
+TIME_EVOLUTION_STEP_SIZE = 1825
+TIME_EVOLUTION_OVERLAP = False
+TIME_EVOLUTION_MIN_POINTS = 1
+
+# TREND ANALYSIS SETTINGS
+IGNORE_ZERO_VALUES_IN_TREND = False
+

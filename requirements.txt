@@ -1,0 +1,36 @@
+# Core Data Processing
+pandas>=1.5.0
+numpy>=1.21.0
+polars>=0.20.0
+
+# Visualization
+matplotlib>=3.5.0
+plotly>=5.0.0
+dash>=2.0.0
+
+# Scientific Computing
+scipy>=1.9.0
+scikit-learn>=1.1.0
+
+# Statistical Analysis
+statsmodels>=0.13.0
+pymannkendall>=1.4.0
+
+# Wavelet Analysis
+PyWavelets>=1.4.0
+
+# Extreme Value Analysis
+pyextremes>=2.0.0
+emcee>=3.1.0
+corner>=2.2.0
+
+# Excel/File Processing
+openpyxl>=3.0.0
+
+# Jupyter/IPython
+ipython>=8.0.0
+jupyter>=1.0.0
+
+# Additional Utilities
+pathlib2>=2.3.0
+typing-extensions>=4.0.0
