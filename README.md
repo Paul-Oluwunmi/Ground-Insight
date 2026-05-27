@@ -199,11 +199,11 @@ git add .
 git commit -m "Initial commit: Ground Insight groundwater analysis toolkit"
 ```
 
-Repository: **https://github.com/padewunmi/Ground-Insight**
+Repository: **https://github.com/Paul-Oluwunmi/Ground-Insight**
 
 ```bash
 git branch -M main
-git remote add origin https://github.com/padewunmi/Ground-Insight.git
+git remote add origin https://github.com/Paul-Oluwunmi/Ground-Insight.git
 git push -u origin main
 ```
 
