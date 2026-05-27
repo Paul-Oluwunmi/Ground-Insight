@@ -9,7 +9,7 @@ Ground Insight provides a modular framework for:
 - **Data loading** — indexed, long, and wide CSV formats; single file, multi-file folder, and large Canterbury datasets
 - **Trend analysis** — Mann-Kendall (original and seasonal), hydrological year statistics, time evolution
 - **Statistical hypothesis testing** — independent t-tests comparing wells and time periods (p-values, effect size, significance)
-- **Extreme value analysis** — Block Maxima (GEV) and Peaks Over Threshold (GPD), including Bayesian inference
+- **Extreme value analysis** — Block Maxima (GEV) and Peaks Over Threshold (GPD); stationary and non-stationary models; seasonal and drought/flood modes; Bayesian MCMC; return periods and diagnostics
 - **Wavelet analysis** — CWT, coherence, cross-wavelet, and partial coherence
 - **Interactive dashboards** — Dash and Plotly visualisations
 
