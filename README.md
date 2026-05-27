@@ -8,6 +8,7 @@ Ground Insight provides a modular framework for:
 
 - **Data loading** — indexed, long, and wide CSV formats; single file, multi-file folder, and large Canterbury datasets
 - **Trend analysis** — Mann-Kendall (original and seasonal), hydrological year statistics, time evolution
+- **Statistical hypothesis testing** — independent t-tests comparing wells and time periods (p-values, effect size, significance)
 - **Extreme value analysis** — Block Maxima (GEV) and Peaks Over Threshold (GPD), including Bayesian inference
 - **Wavelet analysis** — CWT, coherence, cross-wavelet, and partial coherence
 - **Interactive dashboards** — Dash and Plotly visualisations
@@ -134,6 +135,16 @@ ALPHA_LEVEL = 0.05
 RESAMPLE_FREQUENCY = D
 ```
 
+### Statistical hypothesis testing (`src/plotting/statistical_tests/`)
+
+Interactive comparison of groundwater levels across wells and time periods using independent t-tests, with p-values, t-statistics, Cohen's d effect size, and significance at α = 0.05.
+
+```python
+from src.plotting.statistical_tests import run_statistical_analysis
+
+run_statistical_analysis(data, well_columns)
+```
+
 ### Extreme value analysis
 
 ```python
@@ -173,7 +184,7 @@ When you run `main_unified()`, you can select:
 3. Subplots  
 4. Overlay  
 5. Monthly statistics  
-6. Statistical analysis  
+6. Statistical hypothesis testing  
 7. Extreme value analysis (Block Maxima)  
 8. Extreme value analysis (POT)  
 9. Wavelet analysis  
