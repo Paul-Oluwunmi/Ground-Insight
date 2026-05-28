@@ -32,9 +32,9 @@ def main_unified(use_folder_mode, csv_folder_path, rainfall_filename, mapping_fi
     mapping_filename : str
         Name of mapping CSV file
     use_large_dataset_mode : bool
-        Whether to use large dataset mode for Canterbury data
+        Whether to use large dataset mode (multi-file long format)
     canterbury_data_path : str
-        Path to Canterbury data folder (if use_large_dataset_mode is True)
+        Path to folder of large CSV files (if use_large_dataset_mode is True)
     groundwater_filename : str
         Name of groundwater CSV file (if single file mode)
     data_folder : str
@@ -70,7 +70,7 @@ def main_unified(use_folder_mode, csv_folder_path, rainfall_filename, mapping_fi
             )
             quality_dfs = None
         elif use_large_dataset_mode:
-            print("\n LARGE DATASET MODE: Processing Canterbury GNS data...")
+            print("\n LARGE DATASET MODE: Processing multi-file long-format data...")
             data, well_columns, quality_dfs = load_canterbury_large_datasets(canterbury_data_path)
             mapping_dict = None
         else:

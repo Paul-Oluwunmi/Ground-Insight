@@ -5,7 +5,7 @@ This module provides functions to load groundwater data from various formats:
 - Indexed format (SiteName, Time, Value columns)
 - Single file (wide or long format)
 - Multiple CSV files from a folder
-- Canterbury GNS large datasets
+- Large multi-file long-format datasets
 """
 
 from .indexed_loader import load_indexed_format

@@ -1,5 +1,5 @@
 """
-Loader for Canterbury GNS large datasets with quality categorization.
+Loader for large multi-file datasets with quality categorization (long format).
 """
 
 import os
@@ -12,13 +12,13 @@ import gc
 
 def load_canterbury_large_datasets(canterbury_data_path):
     """
-    Load and process the four large GNS Canterbury datasets.
+    Load and process all CSV files in a folder (large long-format datasets).
     This function handles variations in column names and categorises data by quality.
     
     Parameters:
     -----------
     canterbury_data_path : str
-        Path to folder containing Canterbury GNS data files
+        Path to folder containing one or more CSV files (any filenames)
         
     Returns:
     --------
@@ -28,147 +28,119 @@ def load_canterbury_large_datasets(canterbury_data_path):
     """
     try:
         print("\n" + "="*60)
-        print("LARGE DATASET MODE - Canterbury Region (GNS Data)")
+        print("LARGE DATASET MODE - multi-file long format")
         print("="*60)
         
-        # Define the specific GNS dataset files
-        gns_files = [
-            "GNS_2000s.csv",
-            "GNS_Pre2000s.csv", 
-            "GNS_2010s.csv",
-            "GNS_2020s.csv"
-        ]
-        
-        # Check if Canterbury data folder exists
         if not os.path.exists(canterbury_data_path):
-            print(f"Canterbury data folder not found: {canterbury_data_path}")
+            print(f"Data folder not found: {canterbury_data_path}")
             return None, None, None
         
-        # Check which GNS files exist and load them
+        csv_files = sorted(
+            f for f in os.listdir(canterbury_data_path) if f.lower().endswith('.csv')
+        )
+        if not csv_files:
+            print(f"No CSV files found in: {canterbury_data_path}")
+            return None, None, None
+        
+        print(f"Found {len(csv_files)} CSV file(s)")
         all_dataframes = []
         
-        for file in gns_files:
+        for file in csv_files:
             file_path = os.path.join(canterbury_data_path, file)
-            if os.path.exists(file_path):
-                print(f"Loading: {file}")
-                try:
-                    # Load the CSV file
-                    data = pl.read_csv(
-                        file_path,
-                        null_values=["NA", "", "None", "#N/A", "NaN"],
-                        infer_schema_length=None
-                    )
-                    
-                    if data is None or len(data) == 0:
-                        print(f"Warning: No data in {file}")
-                        continue
-                    
-                    # Convert to pandas for easier manipulation
-                    data_pd = data.to_pandas()
-                    
-                    # Comprehensive column mapping to handle all variations
-                    col_mapping = {}
-                    for col in data_pd.columns:
-                        col_lower = col.lower()
-                        
-                        # DateTime columns - handle both ReadDateTime and ReadDate
-                        if col_lower in ['readdatetime', 'readdate', 'datetime', 'date', 'time']:
-                            col_mapping[col] = 'DateTime'
-                        
-                        # Site/Well identifier columns
-                        elif col_lower in ['sitekey', 'site_key', 'site', 'well', 'well_id', 'wellid', 'point']:
-                            col_mapping[col] = 'SiteKey'
-                        
-                        # Water level columns
-                        elif col_lower in ['waterlevel', 'water_level', 'level', 'value']:
-                            col_mapping[col] = 'WaterLevel'
-                        
-                        # Source column for data quality
-                        elif col_lower in ['source']:
-                            col_mapping[col] = 'Source'
-                    
-                    if col_mapping:
-                        data_pd = data_pd.rename(columns=col_mapping)
-                    
-                    # Validate required columns
-                    if 'DateTime' not in data_pd.columns:
-                        print(f"Warning: DateTime column not found in {file}")
-                        continue
-                    
-                    if 'SiteKey' not in data_pd.columns:
-                        print(f"Warning: SiteKey column not found in {file}")
-                        continue
-                    
-                    if 'WaterLevel' not in data_pd.columns:
-                        print(f"Warning: WaterLevel column not found in {file}")
-                        continue
-                    
-                    # Clean well names - replace problematic characters with underscores
-                    data_pd['SiteKey'] = data_pd['SiteKey'].astype(str).str.replace('/', '_').str.replace('\\', '_').str.replace(' ', '_').str.replace('-', '_')
-                    
-                    # Handle DateTime parsing
-                    try:
-                        data_pd['DateTime'] = pd.to_datetime(data_pd['DateTime'], errors='coerce')
-                        
-                        # Check if we got any valid dates
-                        if data_pd['DateTime'].isna().all():
-                            print(f"Warning: Could not parse any dates in {file}")
-                            continue
-                        
-                        # Remove rows with invalid dates
-                        data_pd = data_pd.dropna(subset=['DateTime'])
-                        
-                    except Exception as e:
-                        print(f"Warning: Could not parse DateTime in {file}: {e}")
-                        continue
-                    
-                    # Convert WaterLevel to numeric
-                    data_pd['WaterLevel'] = pd.to_numeric(data_pd['WaterLevel'], errors='coerce')
-                    
-                    # Process Source column for data quality categorisation
-                    if 'Source' in data_pd.columns:
-                        # Create data quality categories
-                        data_pd['DataQuality'] = data_pd['Source'].map({
-                            'A': 'Best',      # Highest quality
-                            'N': 'Second',    # Second best quality  
-                            'F': 'Unsure'     # Unsure quality
-                        })
-                        
-                        # Fill any unmapped values as 'Unsure'
-                        data_pd['DataQuality'] = data_pd['DataQuality'].fillna('Unsure')
-                        
-                        print(f"Data quality distribution in {file}:")
-                        quality_counts = data_pd['DataQuality'].value_counts()
-                        for quality, count in quality_counts.items():
-                            print(f"  {quality}: {count} records")
-                    else:
-                        # If no Source column, assign all as 'Unsure' quality
-                        data_pd['DataQuality'] = 'Unsure'
-                        print(f"No Source column found in {file}, all data marked as 'Unsure' quality")
-                    
-                    # Remove rows with missing values in key columns
-                    data_pd = data_pd.dropna(subset=['DateTime', 'SiteKey', 'WaterLevel'])
-                    
-                    if len(data_pd) == 0:
-                        print(f"Warning: No valid data after cleaning in {file}")
-                        continue
-                    
-                    # Add to our collections
-                    all_dataframes.append(data_pd)
-                    print(f"Loaded {len(data_pd)} records from {file}")
-                    
-                except Exception as e:
-                    print(f"Error loading {file}: {str(e)}")
+            print(f"Loading: {file}")
+            try:
+                data = pl.read_csv(
+                    file_path,
+                    null_values=["NA", "", "None", "#N/A", "NaN"],
+                    infer_schema_length=None
+                )
+
+                if data is None or len(data) == 0:
+                    print(f"Warning: No data in {file}")
                     continue
-            else:
-                print(f"Warning: {file} not found")
+
+                data_pd = data.to_pandas()
+
+                col_mapping = {}
+                for col in data_pd.columns:
+                    col_lower = col.lower()
+
+                    if col_lower in ['readdatetime', 'readdate', 'datetime', 'date', 'time']:
+                        col_mapping[col] = 'DateTime'
+                    elif col_lower in ['sitekey', 'site_key', 'site', 'well', 'well_id', 'wellid', 'point']:
+                        col_mapping[col] = 'SiteKey'
+                    elif col_lower in ['waterlevel', 'water_level', 'level', 'value']:
+                        col_mapping[col] = 'WaterLevel'
+                    elif col_lower in ['source']:
+                        col_mapping[col] = 'Source'
+
+                if col_mapping:
+                    data_pd = data_pd.rename(columns=col_mapping)
+
+                if 'DateTime' not in data_pd.columns:
+                    print(f"Warning: DateTime column not found in {file}")
+                    continue
+
+                if 'SiteKey' not in data_pd.columns:
+                    print(f"Warning: SiteKey column not found in {file}")
+                    continue
+
+                if 'WaterLevel' not in data_pd.columns:
+                    print(f"Warning: WaterLevel column not found in {file}")
+                    continue
+
+                data_pd['SiteKey'] = data_pd['SiteKey'].astype(str).str.replace('/', '_').str.replace('\\', '_').str.replace(' ', '_').str.replace('-', '_')
+
+                try:
+                    data_pd['DateTime'] = pd.to_datetime(data_pd['DateTime'], errors='coerce')
+
+                    if data_pd['DateTime'].isna().all():
+                        print(f"Warning: Could not parse any dates in {file}")
+                        continue
+
+                    data_pd = data_pd.dropna(subset=['DateTime'])
+
+                except Exception as e:
+                    print(f"Warning: Could not parse DateTime in {file}: {e}")
+                    continue
+
+                data_pd['WaterLevel'] = pd.to_numeric(data_pd['WaterLevel'], errors='coerce')
+
+                if 'Source' in data_pd.columns:
+                    data_pd['DataQuality'] = data_pd['Source'].map({
+                        'A': 'Best',
+                        'N': 'Second',
+                        'F': 'Unsure'
+                    })
+                    data_pd['DataQuality'] = data_pd['DataQuality'].fillna('Unsure')
+
+                    print(f"Data quality distribution in {file}:")
+                    quality_counts = data_pd['DataQuality'].value_counts()
+                    for quality, count in quality_counts.items():
+                        print(f"  {quality}: {count} records")
+                else:
+                    data_pd['DataQuality'] = 'Unsure'
+                    print(f"No Source column found in {file}, all data marked as 'Unsure' quality")
+
+                data_pd = data_pd.dropna(subset=['DateTime', 'SiteKey', 'WaterLevel'])
+
+                if len(data_pd) == 0:
+                    print(f"Warning: No valid data after cleaning in {file}")
+                    continue
+
+                all_dataframes.append(data_pd)
+                print(f"Loaded {len(data_pd)} records from {file}")
+
+            except Exception as e:
+                print(f"Error loading {file}: {str(e)}")
+                continue
         
         if not all_dataframes:
-            print("No valid data loaded from any GNS datasets.")
+            print("No valid data loaded from any CSV files.")
             return None, None, None
         
         # Combine all dataframes
-        print("\nCombining all GNS datasets...")
+        print("\nCombining all datasets...")
         if len(all_dataframes) == 1:
             merged = all_dataframes[0]
         else:

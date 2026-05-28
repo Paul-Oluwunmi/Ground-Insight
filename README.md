@@ -66,7 +66,7 @@ use_large_dataset_mode = False
 canterbury_data_path = str(PROJECT_ROOT / "Canterbury_data")
 ```
 
-Regional folders (`Canterbury_data`, `Hawkesbay_data`, `Waikato_data`) are optional naming examples and stay **local only**. Their layouts differ: Canterbury uses four fixed GNS files; Waikato/Hawkes Bay-style folders hold many per-site CSVs. See **[`DATA.md`](DATA.md)** for structure, column names, and loading modes.
+Regional folders (`Canterbury_data`, `Hawkesbay_data`, `Waikato_data`) are optional naming examples and stay **local only**. Their layouts differ: Canterbury holds large long-format CSVs (any filenames); Waikato/Hawkes Bay-style folders hold many per-site CSVs. See **[`DATA.md`](DATA.md)** for structure, column names, and loading modes.
 
 ### 3. Run the analysis
 
@@ -125,7 +125,7 @@ Ground_Insight/
 |------|-------------|------------|
 | **Single file** | One groundwater CSV (+ optional rainfall) | `groundwater_filename`, `data_folder` |
 | **Folder** | Many well CSVs in one directory | `use_folder_mode=True`, `csv_folder_path` |
-| **Large dataset** | Canterbury GNS-style multi-file layout | `use_large_dataset_mode=True`, `canterbury_data_path` |
+| **Large dataset** | Multi-file long-format layout (any CSV names) | `use_large_dataset_mode=True`, `canterbury_data_path` |
 
 Groundwater CSVs should include a `DateTime` column. Rainfall files use `DateTime` and `mm_Rain`.
 

@@ -2,7 +2,7 @@
 
 Large CSV and Excel datasets are **not** included in the GitHub repository (see `.gitignore`). After cloning, add your own data locally before running `Gwldd.ipynb`.
 
-The folder names `Canterbury_data`, `Hawkesbay_data`, and `Waikato_data` are **examples** from this project’s New Zealand regional work. You can rename folders or use your own paths — only **Canterbury large-dataset mode** expects specific file names inside the folder.
+The folder names `Canterbury_data`, `Hawkesbay_data`, and `Waikato_data` are **examples** from this project’s New Zealand regional work. You can rename folders or use your own paths; CSV filenames inside each folder can also be anything you choose.
 
 ---
 
@@ -10,7 +10,7 @@ The folder names `Canterbury_data`, `Hawkesbay_data`, and `Waikato_data` are **e
 
 | Folder | Loading mode in `Gwldd.ipynb` | What Ground Insight expects |
 |--------|-------------------------------|-----------------------------|
-| **`Canterbury_data/`** | `use_large_dataset_mode = True` | Exactly four large GNS-style CSVs (see below). One file per decade, many wells per file. |
+| **`Canterbury_data/`** | `use_large_dataset_mode = True` | One or more large **long-format** CSVs (any filenames). Many wells per file. |
 | **`Waikato_data/`** | `use_folder_mode = True`, `csv_folder_path` → this folder | Many small CSVs (often one monitoring site per file). Format is auto-detected per file. |
 | **`Hawkesbay_data/`** | Same as Waikato — **folder mode** | Same rules as any multi-file folder. The name is not special in the code; it is just another regional batch. |
 
@@ -18,9 +18,9 @@ Rainfall and mapping files for folder mode usually sit in **`data_folder`** (pro
 
 ---
 
-## Canterbury_data (large GNS dataset mode)
+## Canterbury_data (large dataset mode)
 
-**Purpose:** Canterbury Plains groundwater monitoring compiled in a GNS-style **long** layout: many sites and timestamps in a few very large files, with optional quality flags.
+**Purpose:** A folder of large **long-format** CSVs: many sites and timestamps spread across one or more files, with optional quality flags. Filenames do not matter — Ground Insight loads every `.csv` in the folder.
 
 **Enable in the notebook:**
 
@@ -29,17 +29,16 @@ use_large_dataset_mode = True
 canterbury_data_path = str(PROJECT_ROOT / "Canterbury_data")
 ```
 
-**Directory layout** — flat folder, four fixed filenames:
+**Directory layout** — flat folder, any `.csv` names:
 
 ```
 Canterbury_data/
-├── GNS_Pre2000s.csv
-├── GNS_2000s.csv
-├── GNS_2010s.csv
-└── GNS_2020s.csv
+├── period_1.csv
+├── period_2.csv
+└── regional_export.csv
 ```
 
-All four names are hard-coded in `src/data_loading/canterbury_loader.py`. Missing files are skipped with a warning; at least one file must load successfully.
+Example names from this project: `GNS_Pre2000s.csv`, `GNS_2000s.csv`, etc. — these are **not** required. At least one valid CSV must load successfully.
 
 **Typical columns** (names are normalised on load; variants are accepted):
 
@@ -50,7 +49,7 @@ All four names are hard-coded in `src/data_loading/canterbury_loader.py`. Missin
 | Groundwater level | `WaterLevel`, `water_level`, `Level`, `Value` |
 | Data quality (optional) | `Source` — values `A`, `N`, `F` map to Best / Second / Unsure |
 
-**Example header** (from `GNS_2020s.csv`):
+**Example header** (long format):
 
 ```text
 SiteKey,ReadDateTime,WaterLevel,Source,EastingNZTM,NorthingNZTM,Depth,Comment,...
@@ -167,6 +166,6 @@ Merged as `DateTime` + `mm_Rain`.
 |------|------|---------------|----------------|
 | Single file | defaults | `data_folder` | 1–2 CSVs at project root |
 | Folder | `use_folder_mode=True` | `csv_folder_path` | Many CSVs, mixed formats OK |
-| Canterbury GNS | `use_large_dataset_mode=True` | `canterbury_data_path` | 4 named `GNS_*.csv` files |
+| Large dataset | `use_large_dataset_mode=True` | `canterbury_data_path` | Any `.csv` files, long format |
 
 Update paths in the **PATHS AND SETTINGS** cell in `Gwldd.ipynb`. For citation and contact, see `README.md` and `CITATION.cff`.
