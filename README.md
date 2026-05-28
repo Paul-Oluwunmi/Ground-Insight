@@ -66,7 +66,7 @@ use_large_dataset_mode = False
 canterbury_data_path = str(PROJECT_ROOT / "Canterbury_data")
 ```
 
-Regional folders (`Canterbury_data`, `Hawkesbay_data`, `Waikato_data`) are optional and stay **local only** — create them if you use folder or Canterbury large-dataset mode.
+Regional folders (`Canterbury_data`, `Hawkesbay_data`, `Waikato_data`) are optional naming examples and stay **local only**. Their layouts differ: Canterbury uses four fixed GNS files; Waikato/Hawkes Bay-style folders hold many per-site CSVs. See **[`DATA.md`](DATA.md)** for structure, column names, and loading modes.
 
 ### 3. Run the analysis
 
@@ -207,7 +207,7 @@ When you run `main_unified()`, you can select:
 
 ## Data on GitHub
 
-CSV and regional data folders are excluded from the repository (see `DATA.md`). Clone the repo, then add your own data locally before running the notebook.
+CSV and regional data folders are excluded from the repository. Clone the repo, then add your own data locally before running the notebook. Folder layouts, column names, and examples for `Canterbury_data`, `Waikato_data`, and `Hawkesbay_data` are documented in **[`DATA.md`](DATA.md)**.
 
 ## Publishing to GitHub
 
