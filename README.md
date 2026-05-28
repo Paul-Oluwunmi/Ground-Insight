@@ -37,30 +37,36 @@ install_requirements()
 Start Jupyter in this folder and open `Gwldd.ipynb`:
 
 ```bash
-cd C:\Users\oluwunmi\Desktop\Ground_Insight
+cd /path/to/Ground_Insight
 jupyter notebook Gwldd.ipynb
 ```
 
 ### 2. Set your paths
 
-In the configuration cell, point `module_path` and `data_folder` at this project directory (or wherever your CSVs are stored). Example:
+In the **PATHS AND SETTINGS** cell in `Gwldd.ipynb`, set `PROJECT_ROOT` to wherever you cloned the repo (or wherever your CSVs live). If you start Jupyter from the project folder, `Path.cwd()` is enough.
+
+**Data are not on GitHub.** After cloning, copy your CSVs into the project (see [`DATA.md`](DATA.md)), then point the filenames below at those files.
 
 ```python
-module_path = r"C:\Users\oluwunmi\Desktop\Ground_Insight"
-data_folder = r"C:\Users\oluwunmi\Desktop\Ground_Insight"
+from pathlib import Path
 
-groundwater_filename = "DunTestData.csv"
-rainfall_filename = "DunRain.csv"
+PROJECT_ROOT = Path.cwd()  # or Path(r"/path/to/Ground_Insight")
+
+module_path = str(PROJECT_ROOT)
+data_folder = str(PROJECT_ROOT)
+
+groundwater_filename = "DunTestData.csv"   # your groundwater CSV name
+rainfall_filename = "DunRain.csv"          # optional; set to "None" if unused
 mapping_filename = "None"
 
 # Optional modes
 use_folder_mode = False
-csv_folder_path = r"C:\Users\oluwunmi\Desktop\Ground_Insight\Waikato_data"
+csv_folder_path = str(PROJECT_ROOT / "Waikato_data")
 use_large_dataset_mode = False
-canterbury_data_path = r"C:\Users\oluwunmi\Desktop\Ground_Insight\Canterbury_data"
+canterbury_data_path = str(PROJECT_ROOT / "Canterbury_data")
 ```
 
-Sample data files are included at the project root (`DunTestData.csv`, `DunRain.csv`, `TaurTestData.csv`, and so on). Regional datasets are in `Canterbury_data`, `Hawkesbay_data`, and `Waikato_data`.
+Regional folders (`Canterbury_data`, `Hawkesbay_data`, `Waikato_data`) are optional and stay **local only** — create them if you use folder or Canterbury large-dataset mode.
 
 ### 3. Run the analysis
 
@@ -105,9 +111,9 @@ Ground_Insight/
 │   │   └── Batch_Mann_Kendall.py
 │   ├── main.py                    # main_unified() and visualisation menu
 │   └── install_packages.py
-├── Canterbury_data/               # Large regional datasets
-├── Hawkesbay_data/
-├── Waikato_data/
+├── Canterbury_data/               # Local only (not in repo); large regional datasets
+├── Hawkesbay_data/                # Local only
+├── Waikato_data/                  # Local only
 ├── Gwldd.ipynb                    # Main workflow notebook
 ├── requirements.txt
 └── README.md
