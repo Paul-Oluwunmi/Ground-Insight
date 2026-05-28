@@ -38,7 +38,7 @@ Canterbury_data/
 └── regional_export.csv
 ```
 
-Example names from this project: `GNS_Pre2000s.csv`, `GNS_2000s.csv`, etc. — these are **not** required. At least one valid CSV must load successfully.
+Use any filenames you like (e.g. `period_1.csv`, `regional_export.csv`). At least one valid CSV must load successfully.
 
 **Typical columns** (names are normalised on load; variants are accepted):
 
