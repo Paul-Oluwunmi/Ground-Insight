@@ -2,23 +2,24 @@
 
 Large CSV and Excel datasets are **not** included in the GitHub repository (see `.gitignore`). After cloning, add your own data locally before running `Gwldd.ipynb`.
 
-The folder names `Canterbury_data`, `Hawkesbay_data`, and `Waikato_data` are **examples** from this project’s New Zealand regional work. You can rename folders or use your own paths; CSV filenames inside each folder can also be anything you choose.
+The folder names `large_dataset` and `folder_mode_data` are **examples** named after their loading mode. You can rename folders or use your own paths; CSV filenames inside each folder can also be anything you choose.
 
 ---
 
-## How the three example folders are used
+## How the example folders are used
 
 | Folder | Loading mode in `Gwldd.ipynb` | What Ground Insight expects |
 |--------|-------------------------------|-----------------------------|
-| **`Canterbury_data/`** | `use_large_dataset_mode = True` | One or more large **long-format** CSVs (any filenames). Many wells per file. |
-| **`Waikato_data/`** | `use_folder_mode = True`, `csv_folder_path` → this folder | Many small CSVs (often one monitoring site per file). Format is auto-detected per file. |
-| **`Hawkesbay_data/`** | Same as Waikato — **folder mode** | Same rules as any multi-file folder. The name is not special in the code; it is just another regional batch. |
+| **`large_dataset/`** | `use_large_dataset_mode = True` | One or more large **long-format** CSVs (any filenames). Many wells per file. |
+| **`folder_mode_data/`** | `use_folder_mode = True`, `csv_folder_path` → this folder | Many small CSVs (often one monitoring site per file). Format is auto-detected per file. |
 
-Rainfall and mapping files for folder mode usually sit in **`data_folder`** (project root), not inside the regional subfolder — see [Folder mode](#folder-mode-waikato_data-hawkesbay_data-or-any-directory).
+You can keep several folder-mode directories (e.g. `folder_mode_data_2`) for different datasets — point `csv_folder_path` at whichever one you want to load.
+
+Rainfall and mapping files for folder mode usually sit in **`data_folder`** (project root), not inside the data subfolder — see [Folder mode](#folder-mode).
 
 ---
 
-## Canterbury_data (large dataset mode)
+## Large dataset mode (`large_dataset/`)
 
 **Purpose:** A folder of large **long-format** CSVs: many sites and timestamps spread across one or more files, with optional quality flags. Filenames do not matter — Ground Insight loads every `.csv` in the folder.
 
@@ -26,13 +27,13 @@ Rainfall and mapping files for folder mode usually sit in **`data_folder`** (pro
 
 ```python
 use_large_dataset_mode = True
-canterbury_data_path = str(PROJECT_ROOT / "Canterbury_data")
+large_dataset_path = str(PROJECT_ROOT / "large_dataset")
 ```
 
 **Directory layout** — flat folder, any `.csv` names:
 
 ```
-Canterbury_data/
+large_dataset/
 ├── period_1.csv
 ├── period_2.csv
 └── regional_export.csv
@@ -62,7 +63,7 @@ Extra metadata columns (easting, screen depths, etc.) are kept in the raw load b
 
 ---
 
-## Folder mode (Waikato_data, Hawkesbay_data, or any directory)
+## Folder mode
 
 **Purpose:** A directory of many CSV files — common when each file is one site or one export from a regional database.
 
@@ -70,24 +71,17 @@ Extra metadata columns (easting, screen depths, etc.) are kept in the raw load b
 
 ```python
 use_folder_mode = True
-csv_folder_path = str(PROJECT_ROOT / "Waikato_data")   # or Hawkesbay_data, or your path
+csv_folder_path = str(PROJECT_ROOT / "folder_mode_data")   # or any folder you choose
 use_large_dataset_mode = False
 ```
 
 **Directory layout** — flat list of `.csv` files (no required subfolders):
 
 ```
-Waikato_data/
-├── GW Level TS Day Mean 63_12 GWLevel.csv
-├── GW Level TS Day Mean 64_01 GWLevel.csv
+folder_mode_data/
+├── site_63_12.csv
+├── site_64_01.csv
 └── ...   (one file per site is typical; 500+ files is fine)
-```
-
-```
-Hawkesbay_data/
-├── water_Elevation_Above_Sea_Level.csv
-├── water_Elevation_Above_Sea_Level_Manual_Water_Level.csv
-└── water_Elevation_Above_Sea_Level_Recorder_Water_Level.csv
 ```
 
 Every `.csv` in the folder is read and merged on `DateTime`. Optional rainfall (`rainfall_filename`) and mapping (`mapping_filename`) are loaded from **`data_folder`** (usually the project root), not from inside `csv_folder_path`.
@@ -130,7 +124,7 @@ After loading, all folder-mode data are combined into one dataframe: index `Date
 
 ## Single-file mode (project root)
 
-**Purpose:** One groundwater CSV (and optionally one rainfall CSV) in `data_folder`, without regional subfolders.
+**Purpose:** One groundwater CSV (and optionally one rainfall CSV) in `data_folder`, without data subfolders.
 
 ```python
 use_folder_mode = False
@@ -166,6 +160,6 @@ Merged as `DateTime` + `mm_Rain`.
 |------|------|---------------|----------------|
 | Single file | defaults | `data_folder` | 1–2 CSVs at project root |
 | Folder | `use_folder_mode=True` | `csv_folder_path` | Many CSVs, mixed formats OK |
-| Large dataset | `use_large_dataset_mode=True` | `canterbury_data_path` | Any `.csv` files, long format |
+| Large dataset | `use_large_dataset_mode=True` | `large_dataset_path` | Any `.csv` files, long format |
 
 Update paths in the **PATHS AND SETTINGS** cell in `Gwldd.ipynb`. For citation and contact, see `README.md` and `CITATION.cff`.

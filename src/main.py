@@ -7,7 +7,7 @@ from src.data_loading import (
     load_indexed_format,
     load_and_process_data,
     load_multiple_csv_enhanced,
-    load_canterbury_large_datasets,
+    load_large_datasets,
     detect_data_format,
     clean_filename,
     convert_units,
@@ -16,7 +16,7 @@ from src.data_loading import (
 
 
 def main_unified(use_folder_mode, csv_folder_path, rainfall_filename, mapping_filename,
-                 use_large_dataset_mode, canterbury_data_path,
+                 use_large_dataset_mode, large_dataset_path,
                  groundwater_filename, data_folder, CONVERT_MM_TO_METERS, REMOVE_DUPLICATES):
     """
     Universal main execution function that handles all scenarios.
@@ -33,7 +33,7 @@ def main_unified(use_folder_mode, csv_folder_path, rainfall_filename, mapping_fi
         Name of mapping CSV file
     use_large_dataset_mode : bool
         Whether to use large dataset mode (multi-file long format)
-    canterbury_data_path : str
+    large_dataset_path : str
         Path to folder of large CSV files (if use_large_dataset_mode is True)
     groundwater_filename : str
         Name of groundwater CSV file (if single file mode)
@@ -71,7 +71,7 @@ def main_unified(use_folder_mode, csv_folder_path, rainfall_filename, mapping_fi
             quality_dfs = None
         elif use_large_dataset_mode:
             print("\n LARGE DATASET MODE: Processing multi-file long-format data...")
-            data, well_columns, quality_dfs = load_canterbury_large_datasets(canterbury_data_path)
+            data, well_columns, quality_dfs = load_large_datasets(large_dataset_path)
             mapping_dict = None
         else:
             print(f"\n SINGLE FILE MODE: Loading data from {groundwater_filename}")

@@ -41,9 +41,9 @@ ENV/
 *.csv
 *.xlsx
 *.xls
-Canterbury_data/
-Hawkesbay_data/
-Waikato_data/
+large_dataset/
+folder_mode_data/
+folder_mode_data_2/
 
 # OS
 .DS_Store

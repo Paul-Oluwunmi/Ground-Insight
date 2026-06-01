@@ -6,7 +6,7 @@ A Python toolkit for groundwater level analysis, rainfall relationships, and int
 
 Ground Insight provides a modular framework for:
 
-- **Data loading** — indexed, long, and wide CSV formats; single file, multi-file folder, and large Canterbury datasets
+- **Data loading** — indexed, long, and wide CSV formats; single file, multi-file folder, and large multi-file datasets
 - **Trend analysis** — Mann-Kendall (original and seasonal), hydrological year statistics, time evolution
 - **Statistical hypothesis testing** — independent t-tests comparing wells and time periods (p-values, effect size, significance)
 - **Monthly statistics** — seasonal boxplot summaries of groundwater levels by month and year, with customisable percentiles
@@ -61,12 +61,12 @@ mapping_filename = "None"
 
 # Optional modes
 use_folder_mode = False
-csv_folder_path = str(PROJECT_ROOT / "Waikato_data")
+csv_folder_path = str(PROJECT_ROOT / "folder_mode_data")
 use_large_dataset_mode = False
-canterbury_data_path = str(PROJECT_ROOT / "Canterbury_data")
+large_dataset_path = str(PROJECT_ROOT / "large_dataset")
 ```
 
-Regional folders (`Canterbury_data`, `Hawkesbay_data`, `Waikato_data`) are optional naming examples and stay **local only**. Their layouts differ: Canterbury holds large long-format CSVs (any filenames); Waikato/Hawkes Bay-style folders hold many per-site CSVs. See **[`DATA.md`](DATA.md)** for structure, column names, and loading modes.
+Data folders (`large_dataset`, `folder_mode_data`) are examples and stay **local only**. Their layouts differ: `large_dataset` holds large long-format CSVs (any filenames); `folder_mode_data` holds many per-site CSVs. See **[`DATA.md`](DATA.md)** for structure, column names, and loading modes.
 
 ### 3. Run the analysis
 
@@ -81,7 +81,7 @@ data, well_columns, mapping_dict, quality_dfs = main_unified(
     rainfall_filename=rainfall_filename,
     mapping_filename=mapping_filename,
     use_large_dataset_mode=use_large_dataset_mode,
-    canterbury_data_path=canterbury_data_path,
+    large_dataset_path=large_dataset_path,
     groundwater_filename=groundwater_filename,
     data_folder=data_folder,
     CONVERT_MM_TO_METERS=False,
@@ -111,9 +111,8 @@ Ground_Insight/
 │   │   └── Batch_Mann_Kendall.py
 │   ├── main.py                    # main_unified() and visualisation menu
 │   └── install_packages.py
-├── Canterbury_data/               # Local only (not in repo); large regional datasets
-├── Hawkesbay_data/                # Local only
-├── Waikato_data/                  # Local only
+├── large_dataset/                 # Local only (not in repo); large long-format CSVs
+├── folder_mode_data/              # Local only; many per-site CSVs
 ├── Gwldd.ipynb                    # Main workflow notebook
 ├── requirements.txt
 └── README.md
@@ -125,7 +124,7 @@ Ground_Insight/
 |------|-------------|------------|
 | **Single file** | One groundwater CSV (+ optional rainfall) | `groundwater_filename`, `data_folder` |
 | **Folder** | Many well CSVs in one directory | `use_folder_mode=True`, `csv_folder_path` |
-| **Large dataset** | Multi-file long-format layout (any CSV names) | `use_large_dataset_mode=True`, `canterbury_data_path` |
+| **Large dataset** | Multi-file long-format layout (any CSV names) | `use_large_dataset_mode=True`, `large_dataset_path` |
 
 Groundwater CSVs should include a `DateTime` column. Rainfall files use `DateTime` and `mm_Rain`.
 
@@ -207,7 +206,7 @@ When you run `main_unified()`, you can select:
 
 ## Data on GitHub
 
-CSV and regional data folders are excluded from the repository. Clone the repo, then add your own data locally before running the notebook. Folder layouts, column names, and examples for `Canterbury_data`, `Waikato_data`, and `Hawkesbay_data` are documented in **[`DATA.md`](DATA.md)**.
+CSV and data folders are excluded from the repository. Clone the repo, then add your own data locally before running the notebook. Folder layouts, column names, and examples for `large_dataset` and `folder_mode_data` are documented in **[`DATA.md`](DATA.md)**.
 
 ## Publishing to GitHub
 

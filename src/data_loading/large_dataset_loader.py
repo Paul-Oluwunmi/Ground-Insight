@@ -10,14 +10,14 @@ import numpy as np
 import gc
 
 
-def load_canterbury_large_datasets(canterbury_data_path):
+def load_large_datasets(large_dataset_path):
     """
     Load and process all CSV files in a folder (large long-format datasets).
     This function handles variations in column names and categorises data by quality.
     
     Parameters:
     -----------
-    canterbury_data_path : str
+    large_dataset_path : str
         Path to folder containing one or more CSV files (any filenames)
         
     Returns:
@@ -31,22 +31,22 @@ def load_canterbury_large_datasets(canterbury_data_path):
         print("LARGE DATASET MODE - multi-file long format")
         print("="*60)
         
-        if not os.path.exists(canterbury_data_path):
-            print(f"Data folder not found: {canterbury_data_path}")
+        if not os.path.exists(large_dataset_path):
+            print(f"Data folder not found: {large_dataset_path}")
             return None, None, None
         
         csv_files = sorted(
-            f for f in os.listdir(canterbury_data_path) if f.lower().endswith('.csv')
+            f for f in os.listdir(large_dataset_path) if f.lower().endswith('.csv')
         )
         if not csv_files:
-            print(f"No CSV files found in: {canterbury_data_path}")
+            print(f"No CSV files found in: {large_dataset_path}")
             return None, None, None
         
         print(f"Found {len(csv_files)} CSV file(s)")
         all_dataframes = []
         
         for file in csv_files:
-            file_path = os.path.join(canterbury_data_path, file)
+            file_path = os.path.join(large_dataset_path, file)
             print(f"Loading: {file}")
             try:
                 data = pl.read_csv(
@@ -269,6 +269,6 @@ def load_canterbury_large_datasets(canterbury_data_path):
             return None, None, None
         
     except Exception as e:
-        print(f"Error in Canterbury dataset loading: {str(e)}")
+        print(f"Error in large dataset loading: {str(e)}")
         return None, None, None
 
