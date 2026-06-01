@@ -19,11 +19,15 @@ Ground Insight provides a modular framework for:
 - Python 3.8+ (tested with 3.10)
 - Dependencies listed in `requirements.txt`
 
+**No manual setup needed:** the first cell of `Gwldd.ipynb` calls `install_requirements()`, which installs everything from `requirements.txt` into the active kernel automatically. Just open the notebook and run the first cell.
+
+To install manually instead (optional):
+
 ```bash
 pip install -r requirements.txt
 ```
 
-Or from Python or the notebook:
+Or from Python:
 
 ```python
 from src.install_packages import install_requirements
