@@ -32,15 +32,20 @@ def create_layout(well_options, data_type_options, wavelet_type_options, data):
     html.Div
         The complete HTML layout for the dashboard.
     """
-    # Extract layout from original file (lines 163-497)
-    # This is a large layout definition, so we'll read it from the original file
+    # Extract layout from the monolithic source (lines 163-497).
+    # Prefer the copy bundled in this package; fall back to env var / legacy paths.
     import os
     
-    _original_file = r'c:\Users\oluwunmi\Downloads\SCox_update\groundwater_module\src\plotting\Wavelet_Analysis.py'
-    if not os.path.exists(_original_file):
-        _original_file = r'c:\Users\oluwunmi\Downloads\groundwater_module\src\plotting\Wavelet_Analysis.py'
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _candidates = [
+        os.path.normpath(os.path.join(_here, '..', '_wavelet_analysis_full.py')),
+        os.environ.get('WAVELET_ANALYSIS_FILE', ''),
+        r'c:\Users\oluwunmi\Downloads\SCox_update\groundwater_module\src\plotting\Wavelet_Analysis.py',
+        r'c:\Users\oluwunmi\Downloads\groundwater_module\src\plotting\Wavelet_Analysis.py',
+    ]
+    _original_file = next((p for p in _candidates if p and os.path.exists(p)), None)
     
-    if os.path.exists(_original_file):
+    if _original_file:
         # Read original file
         with open(_original_file, 'r', encoding='utf-8') as f:
             original_lines = f.readlines()

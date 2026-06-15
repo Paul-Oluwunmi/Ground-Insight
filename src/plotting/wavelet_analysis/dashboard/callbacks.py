@@ -69,19 +69,30 @@ def register_callbacks(app, data, well_columns, rainfall_col=None, pumping_col=N
     tide_col : str or None
         Column name for tidal data.
     """
-    # Extract callbacks from original file (lines 712-6957)
-    _original_file = r'c:\Users\oluwunmi\Downloads\SCox_update\groundwater_module\src\plotting\Wavelet_Analysis.py'
-    if not os.path.exists(_original_file):
-        _original_file = r'c:\Users\oluwunmi\Downloads\groundwater_module\src\plotting\Wavelet_Analysis.py'
+    # Extract callbacks from the monolithic source (lines 712-end).
+    # Prefer the copy bundled in this package; fall back to env var / legacy paths.
+    _here = os.path.dirname(os.path.abspath(__file__))
+    _candidates = [
+        os.path.normpath(os.path.join(_here, '..', '_wavelet_analysis_full.py')),
+        os.environ.get('WAVELET_ANALYSIS_FILE', ''),
+        r'c:\Users\oluwunmi\Downloads\SCox_update\groundwater_module\src\plotting\Wavelet_Analysis.py',
+        r'c:\Users\oluwunmi\Downloads\groundwater_module\src\plotting\Wavelet_Analysis.py',
+    ]
+    _original_file = next((p for p in _candidates if p and os.path.exists(p)), None)
     
-    if os.path.exists(_original_file):
+    if _original_file:
         # Read original file
         with open(_original_file, 'r', encoding='utf-8') as f:
             original_lines = f.readlines()
         
-        # Extract callback code (lines 712-6957, 0-based: 711-6956)
-        callback_lines = original_lines[711:6957]
-        callback_code = ''.join(callback_lines)
+        # Extract callback code from the function body (from line 712 onward).
+        # The source lives inside run_wavelet_analysis(), so the block is indented;
+        # dedent it to valid top-level code and drop the trailing app.run() call
+        # (the app is created and served elsewhere).
+        import textwrap, re
+        callback_lines = original_lines[711:]
+        callback_code = textwrap.dedent(''.join(callback_lines))
+        callback_code = re.sub(r'(?m)^app\.run\b.*$', '', callback_code)
         
         # Create namespace with modular imports
         callback_namespace = {
@@ -149,6 +160,7 @@ def register_callbacks(app, data, well_columns, rainfall_col=None, pumping_col=N
             logging.error(f"Error executing callback code: {str(e)}\n{traceback.format_exc()}")
             raise
     else:
-        logging.error(f"Original file not found at {_original_file} - callbacks cannot be loaded.")
-        raise FileNotFoundError(f"Original file not found: {_original_file}")
+        _searched = ', '.join(p for p in _candidates if p)
+        logging.error(f"Wavelet source file not found - callbacks cannot be loaded. Searched: {_searched}")
+        raise FileNotFoundError(f"Wavelet source file not found. Searched: {_searched}")
 
