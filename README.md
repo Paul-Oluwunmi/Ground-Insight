@@ -172,6 +172,10 @@ Both GEV and GPD models can be fitted by maximum likelihood **or** through a com
 
 See `extreme_value_analysis*/bayesian_analysis.py` (sampling + diagnostics) and `extreme_value_analysis*/plotting/ppc_plots.py` (posterior predictive checks).
 
+![Posterior predictive check for a Bayesian GPD model: the observed exceedance ECDF sits within the 90% posterior-predictive interval.](docs/ppc_example.png)
+
+*Posterior predictive check (stationary Bayesian GPD). The observed exceedance ECDF falls within the 90% posterior-predictive interval, indicating the fitted model reproduces the data. Regenerate with `python docs/generate_ppc_example.py`.*
+
 ### Wavelet analysis (`src/plotting/wavelet_analysis/`)
 
 Interactive dashboard for time–frequency analysis of groundwater and rainfall. Supports continuous (CWT), discrete (DWT), and stationary (SWT) transforms; wavelet coherence, cross-wavelet transform (XWT), and partial wavelet coherence (PWC); phase analysis; and optional removal of confounder effects (rainfall, pumping, tide) before analysis.
