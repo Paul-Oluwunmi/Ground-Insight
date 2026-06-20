@@ -10,7 +10,7 @@ Ground Insight provides a modular framework for:
 - **Trend analysis** — Mann-Kendall (original and seasonal), hydrological year statistics, time evolution
 - **Statistical hypothesis testing** — independent t-tests comparing wells and time periods (p-values, effect size, significance)
 - **Monthly statistics** — seasonal boxplot summaries of groundwater levels by month and year, with customisable percentiles
-- **Extreme value analysis** — Block Maxima (GEV) and Peaks Over Threshold (GPD); stationary and non-stationary models; seasonal and drought/flood modes; Bayesian MCMC; return periods and diagnostics
+- **Extreme value analysis** — Block Maxima (GEV) and Peaks Over Threshold (GPD); stationary and non-stationary models; seasonal and drought/flood modes; a complete Bayesian MCMC workflow (priors → `emcee` sampling → convergence diagnostics → posterior predictive checks → credible intervals on return levels)
 - **Wavelet analysis** — CWT, DWT, and SWT; wavelet coherence, cross-wavelet and partial coherence; phase analysis; optional confounder adjustment (rainfall, pumping, tide); groundwater–rainfall comparison *(ongoing development)*
 - **Interactive dashboards** — Dash and Plotly visualisations
 
@@ -161,6 +161,16 @@ run_statistical_analysis(data, well_columns)
 from src.plotting.extreme_value_analysis import run_eva_analysis       # Block Maxima (GEV)
 from src.plotting.extreme_value_analysis_pot import run_pot_dashboard  # Peaks Over Threshold (GPD)
 ```
+
+Both GEV and GPD models can be fitted by maximum likelihood **or** through a complete Bayesian MCMC workflow, so uncertainty is propagated end-to-end rather than reported as a single point estimate:
+
+1. **Priors + likelihood** — weakly-informative priors on the shape/scale (and a linear trend on scale for non-stationary models), combined with the GEV/GPD log-likelihood.
+2. **Sampling** — affine-invariant ensemble MCMC with [`emcee`](https://emcee.readthedocs.io) (32 walkers; 15,000–20,000 steps; burn-in discarded; chains thinned).
+3. **Convergence diagnostics** — mean acceptance fraction (target 0.2–0.5) and integrated autocorrelation time, with effective sample sizes reported.
+4. **Posterior predictive checks** — replicate datasets simulated from posterior draws; the posterior-predictive ECDF envelope (90% interval) is overlaid on the observed ECDF, and observed summary statistics (mean, variance, 95th percentile, min, max) are compared against their posterior-predictive credible intervals.
+5. **Inference outputs** — posterior medians, corner plots of the joint posterior, and return levels with 95% credible intervals (time-varying for non-stationary models).
+
+See `extreme_value_analysis*/bayesian_analysis.py` (sampling + diagnostics) and `extreme_value_analysis*/plotting/ppc_plots.py` (posterior predictive checks).
 
 ### Wavelet analysis (`src/plotting/wavelet_analysis/`)
 
