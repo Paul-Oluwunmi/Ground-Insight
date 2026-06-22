@@ -279,7 +279,8 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
                     type='number',
                     value=2,
                     min=0.01,
-                    step=0.1,
+                    step='any',
+                    debounce=True,
                     style={'marginBottom': 8, 'width': '100%'},
                     persistence=False
                 ),
@@ -289,7 +290,8 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
                     type='number',
                     value=48,
                     min=0.01,
-                    step=0.1,
+                    step='any',
+                    debounce=True,
                     style={'marginBottom': 12, 'width': '100%'},
                     persistence=False
                 ),
@@ -370,7 +372,7 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
                 html.Hr(),
                 html.H5("Extract Oscillatory Component", style={'marginTop': 10, 'marginBottom': 6, 'color': '#444'}),
                 html.Label("Extract Period:", style={'marginTop': 6}),
-                dcc.Input(id='extract-period', type='number', value=12, min=0.01, step=0.1, style={'marginBottom': 8, 'width': '100%'}, persistence=False),
+                dcc.Input(id='extract-period', type='number', value=12, min=0.01, step='any', debounce=True, style={'marginBottom': 8, 'width': '100%'}, persistence=False),
                 html.Label("Extract Period Units:", style={'marginTop': 6}),
                 dcc.Dropdown(
                     id='extract-period-units',
@@ -1142,11 +1144,14 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
             min_period_conv = min_period
             max_period_conv = max_period
 
-        # Helper for period <-> scale (Morlet)
+        # Helper for period <-> scale. Use the centre frequency of the wavelet
+        # actually used by pywt.cwt (closure variable `wavelet`) so periods match
+        # the transform's true frequencies. Using a fixed Torrence-Compo Morlet
+        # (w0=6) constant here mislabels periods by ~19% for pywt's 'morl'.
         def period_to_scale(period, dt, w0=6):
-            return period * (w0 + np.sqrt(2 + w0**2)) / (4 * np.pi * dt)
+            return period * pywt.central_frequency(wavelet) / dt
         def scale_to_period(scales, dt, w0=6):
-            return (scales * 4 * np.pi) / (w0 + np.sqrt(2 + w0**2)) * dt
+            return scales * dt / pywt.central_frequency(wavelet)
 
         if tab == 'basic':
             # Robust assignment of x
@@ -1713,7 +1718,10 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
             delta_j = 1 / voices_per_octave
             J = int(np.log2(max_scale / min_scale) / delta_j) if max_scale > min_scale else 1
             scales = min_scale * 2 ** (np.arange(J + 1) * delta_j)
-            periods = scale_to_period(scales, dt)
+            # Period axis must use the centre frequency of the wavelet actually
+            # used by pywt.cwt (e.g. 'morl'), not a fixed Torrence-Compo Morlet
+            # (w0=6) constant, otherwise periods are mislabelled (~19% too short).
+            periods = scales * dt / pywt.central_frequency(wavelet)
             # Convert periods to selected units
             if period_units == 'weeks':
                 periods = periods / 7
@@ -4658,8 +4666,9 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
             J = int(np.log2(max_scale / min_scale) / delta_j) if max_scale > min_scale else 1
             scales = min_scale * 2 ** (np.arange(J + 1) * delta_j)
             
-            # Convert scales to periods for meaningful y-axis
-            periods_coh = scale_to_period(scales, dt)
+            # Convert scales to periods for meaningful y-axis (use the wavelet's
+            # actual centre frequency so periods match pywt.cwt's frequencies).
+            periods_coh = scales * dt / pywt.central_frequency(wavelet)
             # Convert periods to selected units
             if period_units == 'weeks':
                 periods_coh = periods_coh / 7
@@ -5842,8 +5851,9 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
             J = int(np.log2(max_scale / min_scale) / delta_j) if max_scale > min_scale else 1
             scales = min_scale * 2 ** (np.arange(J + 1) * delta_j)
             
-            # Convert scales to periods
-            periods_pwc = scale_to_period(scales, dt)
+            # Convert scales to periods (use the wavelet's actual centre frequency
+            # so periods match pywt.cwt's frequencies).
+            periods_pwc = scales * dt / pywt.central_frequency(wavelet)
             
             # Convert periods to selected units
             if period_units == 'weeks':
@@ -6409,17 +6419,14 @@ def run_wavelet_analysis(data, well_columns, rainfall_col=None, pumping_col=None
          State('show-denoised', 'value')]
     )
     def reset_figure_on_autoscale(relayoutData, tab, data_type, well, wavelet_type, wavelet, resample_freq, min_period, max_period, num_periods, period_units, show_idwt, show_iswt, show_trend, drought_flood, periodic_level, show_anomaly, custom_levels, coh_series1, coh_series2, show_coherence, denoise_threshold, show_denoised):
-        # If autoscale or autorange is triggered, regenerate the figure
-        if relayoutData and (relayoutData.get('autosize') or relayoutData.get('xaxis.autorange') or relayoutData.get('yaxis.autorange')):
-            # Call the update_tab function to regenerate the figure
-            # (simulate a full refresh with current state)
-            result = update_tab(tab, data_type, well, wavelet_type, wavelet, resample_freq, min_period, max_period, num_periods, min_period, max_period, 'none', 3, 95, 'recharge_discharge', show_idwt, show_iswt, show_trend, drought_flood, periodic_level, show_anomaly, custom_levels, coh_series1, coh_series2, show_coherence, denoise_threshold, show_denoised, bypass_protection=False)
-            # Try to extract the figure if present, else do nothing
-            if hasattr(result, 'children') and len(result.children) > 0:
-                first_child = result.children[0]
-                if hasattr(first_child, 'props') and 'figure' in getattr(first_child, 'props', {}):
-                    return first_child.props['figure']
-            return dash.no_update
+        # Autoscale / autorange (double-click or the autoscale button) is handled
+        # client-side by Plotly. The scalogram's data is already limited to the
+        # selected Min/Max Period range, so Plotly's autoscale stays within that
+        # range and there is nothing to regenerate here.
+        #
+        # NOTE: the previous implementation called update_tab(...) with mismatched
+        # positional arguments (min_period passed as start_date, the literal 3 as
+        # period_units, etc.), which silently failed and made autoscale a no-op.
         return dash.no_update
 
     # Callback for coherence series selection
