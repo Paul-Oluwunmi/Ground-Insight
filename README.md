@@ -194,6 +194,24 @@ run_wavelet_analysis(
 )
 ```
 
+#### Example: tidal signal in a coastal monitoring well
+
+A worked example on hourly groundwater levels from a coastal monitoring well (March–June 2019). The three views build up a complete time–frequency reading of the signal.
+
+![Hourly groundwater level time series with spring–neap shading.](docs/images/gwl_timeseries.png)
+
+*Raw hourly groundwater level. The water table oscillates continuously, and the oscillation amplitude swells and fades on a roughly fortnightly rhythm.*
+
+![Wavelet scalogram showing a persistent ~12.4 h band that pulses every ~2 weeks.](docs/images/scalogram.png)
+
+*CWT scalogram (Morlet). Power concentrates in a ~12.4 h period band — the semi-diurnal tide — that pulses on and off about every two weeks.*
+
+![Global wavelet power spectrum with a single significant peak at 12.33 h.](docs/images/global_spectrum.png)
+
+*Global (time-averaged) wavelet spectrum. A single peak at 12.33 h rises above both the 95% and 99% red-noise confidence levels, confirming a statistically significant semi-diurnal periodicity.*
+
+Together the three views show that the well responds to **semi-diurnal ocean tidal loading** (~12.4 h, M2/S2), with the response amplitude **modulated on the ~14.8-day spring–neap cycle** — strongest at spring tides, weakest at neaps.
+
 ### Batch Mann-Kendall
 
 ```python
